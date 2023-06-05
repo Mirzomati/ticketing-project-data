@@ -1,6 +1,7 @@
 package com.cydeo.service.impl;
 
 import com.cydeo.dto.UserDTO;
+import com.cydeo.entity.User;
 import com.cydeo.mapper.UserMapper;
 import com.cydeo.repository.UserRepository;
 import com.cydeo.service.UserService;
@@ -31,6 +32,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDTO findByUserName(String username) {
+
         return userMapper.convertToDto(userRepository.findByUserName(username));
     }
 
@@ -43,5 +45,16 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteByUserName(String username) {
 
+    }
+
+    @Override
+    public UserDTO update(UserDTO user) {
+
+        User user1 = userRepository.findByUserName(user.getUserName());
+        User convertedUser = userMapper.convertToEntity(user);
+        convertedUser.setId(user1.getId());
+        userRepository.save(convertedUser);
+
+        return findByUserName(user.getUserName()) ;
     }
 }
