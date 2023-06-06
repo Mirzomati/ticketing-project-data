@@ -34,6 +34,8 @@ public class TaskServiceImpl implements TaskService {
     public void save(TaskDTO dto) {
 
         Task task = taskMapper.convertToEntity(dto);
+        task.setTaskStatus(Status.OPEN);
+        task.setAssignedDate(LocalDate.now());
 
         taskRepository.save(task);
     }
@@ -44,9 +46,9 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public void delete(String subject) {
+    public void delete(Long id) {
 
-        Task task = taskRepository.findByTaskSubjectContainingIgnoreCase(subject);
+        Task task = taskRepository.findById(id).get();
         task.setIsDeleted(true);
         taskRepository.save(task);
     }
