@@ -30,7 +30,7 @@ public class Task extends BaseEntity{
     @JoinColumn(name = "assigned_employee_id")
     private User assignedEmployee;
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "project_id")
     private Project project;
 
