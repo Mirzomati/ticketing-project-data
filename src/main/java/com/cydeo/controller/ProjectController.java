@@ -3,13 +3,13 @@ package com.cydeo.controller;
 import com.cydeo.dto.ProjectDTO;
 import com.cydeo.dto.UserDTO;
 import com.cydeo.service.ProjectService;
+import com.cydeo.service.TaskService;
 import com.cydeo.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @Controller
@@ -19,9 +19,11 @@ public class ProjectController {
     private final UserService userService;
     private final ProjectService projectService;
 
+
     public ProjectController(UserService userService, ProjectService projectService) {
         this.userService = userService;
         this.projectService = projectService;
+
     }
 
     @GetMapping("/create")
@@ -99,7 +101,7 @@ public class ProjectController {
 
         UserDTO manager = userService.findByUserName("samantha@manager.com");
         List<ProjectDTO> projects = projectService.listAllProjectsByManger(manager);
-
+        projectService.setUnfinishedCompleteCount(projects);
         model.addAttribute("projects", projects);
 
         return "/manager/project-status";
@@ -108,6 +110,7 @@ public class ProjectController {
 
     @GetMapping("/manager/complete/{projectCode}")
     public String managerCompleteProject(@PathVariable("projectCode") String projectCode) {
+
         projectService.complete(projectCode);
         return "redirect:/project/manager/project-status";
     }

@@ -3,10 +3,12 @@ package com.cydeo.service.impl;
 import com.cydeo.dto.ProjectDTO;
 import com.cydeo.dto.UserDTO;
 import com.cydeo.entity.Project;
+import com.cydeo.entity.Task;
 import com.cydeo.enums.Status;
 import com.cydeo.mapper.ProjectMapper;
 import com.cydeo.mapper.UserMapper;
 import com.cydeo.repository.ProjectRepository;
+import com.cydeo.repository.TaskRepository;
 import com.cydeo.service.ProjectService;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -21,11 +23,13 @@ public class ProjectServiceImpl implements ProjectService {
     private final ProjectRepository projectRepository;
     private final ProjectMapper projectMapper;
     private final UserMapper userMapper;
+    private final TaskRepository taskRepository;
 
-    public ProjectServiceImpl(ProjectRepository projectRepository, ProjectMapper projectMapper, UserMapper userMapper) {
+    public ProjectServiceImpl(ProjectRepository projectRepository, ProjectMapper projectMapper, UserMapper userMapper, TaskRepository taskRepository) {
         this.projectRepository = projectRepository;
         this.projectMapper = projectMapper;
         this.userMapper = userMapper;
+        this.taskRepository = taskRepository;
     }
 
 
@@ -90,5 +94,22 @@ public class ProjectServiceImpl implements ProjectService {
         return projects.stream()
                 .map(projectMapper::convertToDto)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public void setUnfinishedCompleteCount(List<ProjectDTO> dtos) {
+
+
+
+        dtos.stream()
+                .forEach(p -> p.setCompleteTaskCounts(taskRepository.countAllByTaskStatusIsAndProjectProjectCode(Status.COMPLETE, p.getProjectCode())));
+
+        dtos.stream()
+                .forEach(p -> p.setUnfinishedTaskCounts(taskRepository.countAllByTaskStatusIsNotAndProjectProjectCode(Status.COMPLETE, p.getProjectCode())));
+
+
+
+
+
     }
 }

@@ -17,12 +17,12 @@ public class TaskServiceImpl implements TaskService {
 
     private  final TaskRepository taskRepository;
     private  final TaskMapper taskMapper;
-    private  final ProjectMapper projectMapper;
 
-    public TaskServiceImpl(TaskRepository taskRepository, TaskMapper taskMapper, ProjectMapper projectMapper) {
+
+    public TaskServiceImpl(TaskRepository taskRepository, TaskMapper taskMapper) {
         this.taskRepository = taskRepository;
         this.taskMapper = taskMapper;
-        this.projectMapper = projectMapper;
+
     }
 
     @Override
@@ -67,14 +67,12 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public TaskDTO findById(Long id) {
 
-
-
-
         return taskMapper.convertToDto(taskRepository.findById(id).get());
     }
 
     @Override
     public List<TaskDTO> findAllTasksByStatusIs(Status status) {
+
         List<Task> tasks = taskRepository.findAllByTaskStatusIs(status);
 
         return tasks.stream().map(taskMapper::convertToDto).collect(Collectors.toList());
@@ -87,5 +85,16 @@ public class TaskServiceImpl implements TaskService {
 
         return tasks.stream().map(taskMapper::convertToDto).collect(Collectors.toList());
 
+    }
+
+    @Override
+    public void updateTaskStatus(TaskDTO dto) {
+
+        Task task = taskMapper.convertToEntity(dto);
+        task.setId(taskRepository.findById(dto.getId()).get().getId());
+        task.setTaskDetail(taskRepository.findById(dto.getId()).get().getTaskDetail());
+        task.setAssignedDate(taskRepository.findById(dto.getId()).get().getAssignedDate());
+
+        taskRepository.save(task);
     }
 }
