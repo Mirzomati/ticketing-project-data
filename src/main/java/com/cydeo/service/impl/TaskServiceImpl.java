@@ -45,8 +45,6 @@ public class TaskServiceImpl implements TaskService {
         task.setTaskStatus(Status.OPEN);
         task.setAssignedDate(LocalDate.now());
 
-
-
         taskRepository.save(task);
     }
 
@@ -57,8 +55,8 @@ public class TaskServiceImpl implements TaskService {
         Task convertedTask = taskMapper.convertToEntity(dto);
 
         if(task.isPresent()){
-            convertedTask.setId(taskRepository.findById(dto.getId()).get().getId());
-            convertedTask.setTaskStatus(task.get().getTaskStatus());
+
+            convertedTask.setTaskStatus(dto.getTaskStatus()== null? task.get().getTaskStatus() : dto.getTaskStatus());
             convertedTask.setAssignedDate(LocalDate.now());
             taskRepository.save(convertedTask);
 
@@ -103,7 +101,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public List<TaskDTO> findAllTasksByStatusIs(Status status) {
+    public List<TaskDTO> listAllTasksByStatusIs(Status status) {
 
         List<Task> tasks = taskRepository.findAllByTaskStatusIs(status);
 
@@ -111,7 +109,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public List<TaskDTO> findAllTasksByStatusIsNot(Status status) {
+    public List<TaskDTO> listAllTasksByStatusIsNot(Status status) {
 
         List<Task> tasks = taskRepository.findAllByTaskStatusIsNot(status);
 
@@ -138,5 +136,16 @@ public class TaskServiceImpl implements TaskService {
 
         tasks.forEach(task -> delete(task.getId()));
 
+    }
+
+    @Override
+    public void completeByProject(ProjectDTO projectDTO) {
+
+        List<Task> tasks = taskRepository.findAllByProject(projectMapper.convertToEntity(projectDTO));
+
+        tasks.stream().map(taskMapper::convertToDto).forEach(taskDTO -> {
+            taskDTO.setTaskStatus(Status.COMPLETE);
+            update(taskDTO);
+        });
     }
 }

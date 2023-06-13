@@ -21,11 +21,13 @@ public interface TaskService {
 
     int totalCompletedTask(String projectCode);
 
-    List<TaskDTO> findAllTasksByStatusIs(Status status);
+    List<TaskDTO> listAllTasksByStatusIs(Status status);
 
-    List<TaskDTO> findAllTasksByStatusIsNot(Status status);
+    List<TaskDTO> listAllTasksByStatusIsNot(Status status);
 
     void updateTaskStatus(TaskDTO dto);
 
     void deleteByProject(ProjectDTO projectDTO);
+
+    void completeByProject(ProjectDTO projectDTO);
 }

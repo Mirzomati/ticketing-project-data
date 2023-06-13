@@ -91,10 +91,11 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public void complete(String code) {
 
-
         Project project = projectRepository.findByProjectCode(code);
         project.setProjectStatus(Status.COMPLETE);
         projectRepository.save(project);
+
+        taskService.completeByProject(projectMapper.convertToDto(project));
     }
 
 
