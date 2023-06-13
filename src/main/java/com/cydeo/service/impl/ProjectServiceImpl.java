@@ -3,13 +3,14 @@ package com.cydeo.service.impl;
 import com.cydeo.dto.ProjectDTO;
 import com.cydeo.dto.UserDTO;
 import com.cydeo.entity.Project;
-import com.cydeo.entity.Task;
+import com.cydeo.entity.User;
 import com.cydeo.enums.Status;
 import com.cydeo.mapper.ProjectMapper;
 import com.cydeo.mapper.UserMapper;
 import com.cydeo.repository.ProjectRepository;
 import com.cydeo.repository.TaskRepository;
 import com.cydeo.service.ProjectService;
+import com.cydeo.service.UserService;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -24,12 +25,14 @@ public class ProjectServiceImpl implements ProjectService {
     private final ProjectMapper projectMapper;
     private final UserMapper userMapper;
     private final TaskRepository taskRepository;
+    private final UserService userService;
 
-    public ProjectServiceImpl(ProjectRepository projectRepository, ProjectMapper projectMapper, UserMapper userMapper, TaskRepository taskRepository) {
+    public ProjectServiceImpl(ProjectRepository projectRepository, ProjectMapper projectMapper, UserMapper userMapper, TaskRepository taskRepository, UserService userService) {
         this.projectRepository = projectRepository;
         this.projectMapper = projectMapper;
         this.userMapper = userMapper;
         this.taskRepository = taskRepository;
+        this.userService = userService;
     }
 
 
@@ -86,10 +89,23 @@ public class ProjectServiceImpl implements ProjectService {
         projectRepository.save(project);
     }
 
-    @Override
-    public List<ProjectDTO> listAllProjectsByManger(UserDTO manager) {
+//    @Override
+//    public List<ProjectDTO> listAllProjectsByManger() {
+//
+////        UserDTO currentUserDTO = userService.findByUserName("harold@manager.com");
+////        List<Project> projects = projectRepository.findAllByAssignedManager(userMapper.convertToEntity(currentUserDTO));
+////
+////        return projects.stream()
+////                .map(projectMapper::convertToDto)
+////                .collect(Collectors.toList());
+//    }
 
-        List<Project> projects = projectRepository.findAllByAssignedManager(userMapper.convertToEntity(manager));
+    @Override
+    public List<ProjectDTO> listAllProjectDetails() {
+
+        UserDTO currentUserDTO = userService.findByUserName("harold@manager.com");
+        User user = userMapper.convertToEntity(currentUserDTO);
+        List<Project> projects = projectRepository.findAllByAssignedManager(user);
 
         return projects.stream()
                 .map(projectMapper::convertToDto)

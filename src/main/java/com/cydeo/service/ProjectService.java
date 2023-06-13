@@ -13,7 +13,9 @@ public interface ProjectService {
     void update(ProjectDTO dto);
     void delete(String code);
     void complete(String code);
-    List<ProjectDTO> listAllProjectsByManger(UserDTO manager);
+//    List<ProjectDTO> listAllProjectsByManger();
+
+    List<ProjectDTO> listAllProjectDetails();
 
     void setUnfinishedCompleteCount(List<ProjectDTO> dto);
 }
