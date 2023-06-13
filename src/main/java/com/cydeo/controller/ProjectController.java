@@ -101,7 +101,6 @@ public class ProjectController {
 
 
         List<ProjectDTO> projects = projectService.listAllProjectDetails();
-        projectService.setUnfinishedCompleteCount(projects);
         model.addAttribute("projects", projects);
 
         return "/manager/project-status";

@@ -97,25 +97,16 @@ public class ProjectServiceImpl implements ProjectService {
         User user = userMapper.convertToEntity(currentUserDTO);
         List<Project> projects = projectRepository.findAllByAssignedManager(user);
 
-        return projects.stream()
-                .map(projectMapper::convertToDto)
-                .collect(Collectors.toList());
+        return projects.stream().map(project -> {
+
+           ProjectDTO projectDto = projectMapper.convertToDto(project);
+
+           projectDto.setCompleteTaskCounts(taskRepository.countAllByTaskStatusIsAndProjectProjectCode(Status.COMPLETE, projectDto.getProjectCode()));
+           projectDto.setUnfinishedTaskCounts(taskRepository.countAllByTaskStatusIsNotAndProjectProjectCode(Status.COMPLETE, projectDto.getProjectCode()));
+
+           return projectDto;
+        }).collect(Collectors.toList());
     }
 
-    @Override
-    public void setUnfinishedCompleteCount(List<ProjectDTO> dtos) {
 
-
-
-        dtos.stream()
-                .forEach(p -> p.setCompleteTaskCounts(taskRepository.countAllByTaskStatusIsAndProjectProjectCode(Status.COMPLETE, p.getProjectCode())));
-
-        dtos.stream()
-                .forEach(p -> p.setUnfinishedTaskCounts(taskRepository.countAllByTaskStatusIsNotAndProjectProjectCode(Status.COMPLETE, p.getProjectCode())));
-
-
-
-
-
-    }
 }
