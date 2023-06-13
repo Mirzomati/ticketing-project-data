@@ -89,16 +89,6 @@ public class ProjectServiceImpl implements ProjectService {
         projectRepository.save(project);
     }
 
-//    @Override
-//    public List<ProjectDTO> listAllProjectsByManger() {
-//
-////        UserDTO currentUserDTO = userService.findByUserName("harold@manager.com");
-////        List<Project> projects = projectRepository.findAllByAssignedManager(userMapper.convertToEntity(currentUserDTO));
-////
-////        return projects.stream()
-////                .map(projectMapper::convertToDto)
-////                .collect(Collectors.toList());
-//    }
 
     @Override
     public List<ProjectDTO> listAllProjectDetails() {
