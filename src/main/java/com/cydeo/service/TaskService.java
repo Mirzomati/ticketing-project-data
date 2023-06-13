@@ -1,5 +1,6 @@
 package com.cydeo.service;
 
+import com.cydeo.dto.ProjectDTO;
 import com.cydeo.dto.TaskDTO;
 import com.cydeo.entity.Task;
 import com.cydeo.enums.Status;
@@ -16,10 +17,15 @@ public interface TaskService {
 
     TaskDTO findById(Long id);
 
+    int totalNonCompletedTask(String projectCode);
+
+    int totalCompletedTask(String projectCode);
+
     List<TaskDTO> findAllTasksByStatusIs(Status status);
 
     List<TaskDTO> findAllTasksByStatusIsNot(Status status);
 
     void updateTaskStatus(TaskDTO dto);
 
+    void deleteByProject(ProjectDTO projectDTO);
 }

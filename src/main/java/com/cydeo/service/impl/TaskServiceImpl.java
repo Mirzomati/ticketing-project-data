@@ -1,6 +1,8 @@
 package com.cydeo.service.impl;
 
+import com.cydeo.dto.ProjectDTO;
 import com.cydeo.dto.TaskDTO;
+import com.cydeo.entity.Project;
 import com.cydeo.entity.Task;
 import com.cydeo.enums.Status;
 import com.cydeo.mapper.ProjectMapper;
@@ -18,12 +20,14 @@ public class TaskServiceImpl implements TaskService {
 
     private  final TaskRepository taskRepository;
     private  final TaskMapper taskMapper;
+    private final ProjectMapper projectMapper;
 
 
-    public TaskServiceImpl(TaskRepository taskRepository, TaskMapper taskMapper) {
+    public TaskServiceImpl(TaskRepository taskRepository, TaskMapper taskMapper, ProjectMapper projectMapper) {
         this.taskRepository = taskRepository;
         this.taskMapper = taskMapper;
 
+        this.projectMapper = projectMapper;
     }
 
     @Override
@@ -89,6 +93,16 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
+    public int totalNonCompletedTask(String projectCode) {
+        return taskRepository.totalNonCompletedTasks(projectCode);
+    }
+
+    @Override
+    public int totalCompletedTask(String projectCode) {
+        return taskRepository.totalCompletedTasks(projectCode);
+    }
+
+    @Override
     public List<TaskDTO> findAllTasksByStatusIs(Status status) {
 
         List<Task> tasks = taskRepository.findAllByTaskStatusIs(status);
@@ -101,9 +115,7 @@ public class TaskServiceImpl implements TaskService {
 
         List<Task> tasks = taskRepository.findAllByTaskStatusIsNot(status);
 
-        return tasks.stream()
-                .map(taskMapper::convertToDto)
-                .collect(Collectors.toList());
+        return tasks.stream().map(taskMapper::convertToDto).collect(Collectors.toList());
 
     }
 
@@ -116,5 +128,15 @@ public class TaskServiceImpl implements TaskService {
         task.setAssignedDate(taskRepository.findById(dto.getId()).get().getAssignedDate());
 
         taskRepository.save(task);
+    }
+
+    @Override
+    public void deleteByProject(ProjectDTO projectDTO) {
+
+        Project project = projectMapper.convertToEntity(projectDTO);
+        List<Task> tasks = taskRepository.findAllByProject(project);
+
+        tasks.forEach(task -> delete(task.getId()));
+
     }
 }
