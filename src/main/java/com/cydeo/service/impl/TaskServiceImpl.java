@@ -62,6 +62,7 @@ public class TaskServiceImpl implements TaskService {
         Task convertedTask = taskMapper.convertToEntity(dto);
 
         if(task.isPresent()){
+
             convertedTask.setTaskStatus(dto.getTaskStatus()== null? task.get().getTaskStatus() : dto.getTaskStatus());
             convertedTask.setAssignedDate(LocalDate.now());
             taskRepository.save(convertedTask);
@@ -150,5 +151,12 @@ public class TaskServiceImpl implements TaskService {
             taskDTO.setTaskStatus(Status.COMPLETE);
             update(taskDTO);
         });
+    }
+
+    @Override
+    public List<TaskDTO> listAllNonCompletedByAssignedManager(UserDTO assignedManager) {
+
+        List<Task> tasks = taskRepository.findAllByTaskStatusIsNotAndAssignedEmployee(Status.COMPLETE, userMapper.convertToEntity(assignedManager));
+        return tasks.stream().map(taskMapper::convertToDto).collect(Collectors.toList());
     }
 }

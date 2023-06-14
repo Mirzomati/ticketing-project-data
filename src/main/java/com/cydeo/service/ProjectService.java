@@ -15,5 +15,6 @@ public interface ProjectService {
     void complete(String code);
 
     List<ProjectDTO> listAllProjectDetails();
+    List<ProjectDTO> listAllNonCompletedByAssignedManager(UserDTO assignedManager);
 
 }
